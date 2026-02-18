@@ -20,27 +20,25 @@ COPY . .
 RUN pnpm build
 RUN pnpm ui:build
 
-RUN pnpm prune --prod
-
 FROM node:22-bookworm-slim
 
 RUN npm install -g pnpm@10.23.0
 RUN corepack enable
 
 WORKDIR /app
-RUN chown -R node:node /app
-USER node
 
-COPY --from=builder --chown=node:node /app/dist ./dist
-COPY --from=builder --chown=node:node /app/node_modules ./node_modules
-COPY --from=builder --chown=node:node /app/package.json ./package.json
-COPY --from=builder --chown=node:node /app/openclaw.mjs ./openclaw.mjs
-COPY --from=builder --chown=node:node /app/assets ./assets
-COPY --from=builder --chown=node:node /app/extensions ./extensions
-COPY --from=builder --chown=node:node /app/skills ./skills
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/openclaw.mjs ./openclaw.mjs
+COPY --from=builder /app/assets ./assets
+COPY --from=builder /app/extensions ./extensions
+COPY --from=builder /app/skills ./skills
 
 ENV NODE_ENV=production
 ENV PORT=18789
+ENV NODE_LLAMA_CPP_SKIP_DOWNLOAD=true
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 
 EXPOSE 18789
 
