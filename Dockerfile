@@ -34,9 +34,11 @@ COPY --from=builder /app/openclaw.mjs ./openclaw.mjs
 COPY --from=builder /app/extensions ./extensions
 COPY --from=builder /app/skills ./skills
 
-# Create default config so gateway starts without --allow-unconfigured
+# Create default config so gateway starts with gateway.mode=local
+# Use --allow-unconfigured flag in CMD to bypass config requirement
+# gateway.auth.mode=token uses OPENCLAW_GATEWAY_TOKEN env var
 RUN mkdir -p /root/.openclaw && \
-    echo '{"gateway":{"mode":"local","bind":"all","auth":{"mode":"token"}}}' > /root/.openclaw/openclaw.json
+    echo '{"gateway":{"mode":"local","auth":{"mode":"token"}}}' > /root/.openclaw/openclaw.json
 
 ENV NODE_ENV=production
 ENV PORT=18789
@@ -46,4 +48,4 @@ ENV NODE_OPTIONS=--max-old-space-size=1536
 
 EXPOSE 18789
 
-CMD ["node", "openclaw.mjs", "gateway", "run", "--port", "18789"]
+CMD ["node", "openclaw.mjs", "gateway", "run", "--port", "18789", "--bind", "lan"]
