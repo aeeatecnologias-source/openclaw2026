@@ -36,20 +36,21 @@ COPY --from=builder /app/skills ./skills
 
 # Create config in /data/.openclaw/ (OPENCLAW_STATE_DIR set in Railway)
 # gateway.mode=local avoids --allow-unconfigured
-# gateway.bind=lan makes server listen on 0.0.0.0
+# gateway.bind=lan makes server listen on 0.0.0.0 for Railway health checks
 RUN mkdir -p /data/.openclaw && \
-    echo '{"gateway":{"mode":"local","bind":"lan","auth":{"mode":"token"}}}' > /data/.openclaw/openclaw.json
+    echo '{"gateway":{"mode":"local","bind":"lan","port":8080,"auth":{"mode":"token"}}}' > /data/.openclaw/openclaw.json
 
 # Also create in default location as fallback
 RUN mkdir -p /root/.openclaw && \
-    echo '{"gateway":{"mode":"local","bind":"lan","auth":{"mode":"token"}}}' > /root/.openclaw/openclaw.json
+    echo '{"gateway":{"mode":"local","bind":"lan","port":8080,"auth":{"mode":"token"}}}' > /root/.openclaw/openclaw.json
 
 ENV NODE_ENV=production
 ENV NODE_LLAMA_CPP_SKIP_DOWNLOAD=true
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 ENV NODE_OPTIONS=--max-old-space-size=1536
+# OPENCLAW_GATEWAY_PORT env var overrides default port (18789) when set
+ENV OPENCLAW_GATEWAY_PORT=8080
 
-# Railway injects $PORT dynamically - use shell form CMD to support env vars
 EXPOSE 8080
 
-CMD node openclaw.mjs gateway run --port ${PORT:-8080} --bind lan
+CMD ["node", "openclaw.mjs", "gateway", "run", "--port", "8080", "--bind", "lan"]
