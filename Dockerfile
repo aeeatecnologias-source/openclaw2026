@@ -35,8 +35,8 @@ COPY --from=builder /app/extensions ./extensions
 COPY --from=builder /app/skills ./skills
 
 # Create config in /data/.openclaw/ (OPENCLAW_STATE_DIR set in Railway)
-# gateway.mode=local avoids --allow-unconfigured requirement
-# gateway.bind=lan makes server listen on 0.0.0.0 for Railway health checks
+# gateway.mode=local avoids --allow-unconfigured
+# gateway.bind=lan makes server listen on 0.0.0.0
 RUN mkdir -p /data/.openclaw && \
     echo '{"gateway":{"mode":"local","bind":"lan","auth":{"mode":"token"}}}' > /data/.openclaw/openclaw.json
 
@@ -45,11 +45,11 @@ RUN mkdir -p /root/.openclaw && \
     echo '{"gateway":{"mode":"local","bind":"lan","auth":{"mode":"token"}}}' > /root/.openclaw/openclaw.json
 
 ENV NODE_ENV=production
-ENV PORT=18789
 ENV NODE_LLAMA_CPP_SKIP_DOWNLOAD=true
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 ENV NODE_OPTIONS=--max-old-space-size=1536
 
-EXPOSE 18789
+# Railway injects $PORT dynamically - use shell form CMD to support env vars
+EXPOSE 8080
 
-CMD ["node", "openclaw.mjs", "gateway", "run", "--port", "18789", "--bind", "lan"]
+CMD node openclaw.mjs gateway run --port ${PORT:-8080} --bind lan
