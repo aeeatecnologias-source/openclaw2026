@@ -34,11 +34,15 @@ COPY --from=builder /app/openclaw.mjs ./openclaw.mjs
 COPY --from=builder /app/extensions ./extensions
 COPY --from=builder /app/skills ./skills
 
-# Create default config so gateway starts with gateway.mode=local
-# Use --allow-unconfigured flag in CMD to bypass config requirement
-# gateway.auth.mode=token uses OPENCLAW_GATEWAY_TOKEN env var
+# Create config in /data/.openclaw/ (OPENCLAW_STATE_DIR set in Railway)
+# gateway.mode=local avoids --allow-unconfigured requirement
+# gateway.bind=lan makes server listen on 0.0.0.0 for Railway health checks
+RUN mkdir -p /data/.openclaw && \
+    echo '{"gateway":{"mode":"local","bind":"lan","auth":{"mode":"token"}}}' > /data/.openclaw/openclaw.json
+
+# Also create in default location as fallback
 RUN mkdir -p /root/.openclaw && \
-    echo '{"gateway":{"mode":"local","auth":{"mode":"token"}}}' > /root/.openclaw/openclaw.json
+    echo '{"gateway":{"mode":"local","bind":"lan","auth":{"mode":"token"}}}' > /root/.openclaw/openclaw.json
 
 ENV NODE_ENV=production
 ENV PORT=18789
