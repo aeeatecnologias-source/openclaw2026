@@ -33,6 +33,7 @@ COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/openclaw.mjs ./openclaw.mjs
 COPY --from=builder /app/extensions ./extensions
 COPY --from=builder /app/skills ./skills
+COPY --from=builder /app/docs ./docs
 
 # Create config in /data/.openclaw/ (OPENCLAW_STATE_DIR set in Railway)
 # gateway.mode=local avoids --allow-unconfigured
