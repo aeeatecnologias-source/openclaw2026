@@ -38,7 +38,8 @@ ENV NODE_ENV=production
 ENV PORT=18789
 ENV NODE_LLAMA_CPP_SKIP_DOWNLOAD=true
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+ENV NODE_OPTIONS=--max-old-space-size=1536
 
 EXPOSE 18789
 
-CMD ["node", "openclaw.mjs", "gateway", "run", "--allow-unconfigured"]
+CMD ["node", "openclaw.mjs", "gateway", "run", "--allow-unconfigured", "--port", "18789", "--bind", "lan"]
