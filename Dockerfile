@@ -41,4 +41,4 @@ ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 
 EXPOSE 18789
 
-CMD ["node", "openclaw.mjs", "gateway", "run"]
+CMD ["node", "openclaw.mjs", "gateway", "run", "--allow-unconfigured"]
