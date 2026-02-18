@@ -42,4 +42,4 @@ ENV NODE_OPTIONS=--max-old-space-size=1536
 
 EXPOSE 18789
 
-CMD ["node", "openclaw.mjs", "gateway", "run", "--allow-unconfigured", "--port", "18789", "--bind", "lan"]
+CMD ["node", "dist/index.js", "gateway", "--allow-unconfigured", "--port", "18789", "--bind", "lan"]
